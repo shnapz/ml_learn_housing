@@ -3,6 +3,37 @@ import tarfile
 from six.moves import urllib
 import pandas as pd
 
+from sklearn.datasets import fetch_mldata
+mnist = fetch_mldata("MNIST original")
+
+X, y = mnist["data"], mnist["target"]
+
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+
+shuffle_index = np.random.permutation(60000)
+
+X_train, X_test, y_train, y_test = X[:60000], X[60000:], y[:60000], y[60000:]
+X_train, y_train = X_train[shuffle_index], y_train[shuffle_index]
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import SGDClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
+
+knn_clf = KNeighborsClassifier()
+#knn_clf.fit(X_train, y_train)
+score = cross_val_score(knn_clf, X_train, y_train, cv=3, scoring="accuracy")
+
+
+def plot_image(img_arr):
+    img_mtrx = img_arr.reshape(28, 28)
+    plt.imshow(img_mtrx, cmap=matplotlib.cm.binary, interpolation="nearest")
+    plt.axis("off")
+    plt.show()
+
+
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml/master/"
 HOUSING_PATH = os.path.join("datasets", "housing")
 HOUSING_URL = DOWNLOAD_ROOT + "datasets/housing/housing.tgz"
